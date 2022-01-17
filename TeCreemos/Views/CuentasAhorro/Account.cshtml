@@ -1,0 +1,248 @@
+﻿@model TeCreemos.Models.Account
+@{
+    ViewData["Title"] = "Cuenta de Ahorro";
+}
+
+<div class="container-fluid">
+    @Html.HiddenFor(model => model.IdCuenta)
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card h-100" style="margin:0;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col bloque">
+                            <div class="input-group">
+                                <h1>Datos de Cliente</h1>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Nombre</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.Nombre)
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    <a href="mailto:@Model.Correo">@Html.DisplayFor(model => model.Correo)</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Telefono</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    <a href="tel:@Model.Telefono">@Html.DisplayFor(model => model.Telefono)</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">INE</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.ClaveElector)
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Fecha Nacimiento</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.FechaNacimiento)
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100" style="margin:0;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col bloque">
+                            <div class="input-group">
+                                <h1>Datos de Cuenta</h1>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Núm. Cuenta</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.NoCuenta)
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Fecha Apertura</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.FechaApertura)
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Saldo</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.Editor("Saldo", new { htmlAttributes = new { @readonly= "true" } })
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-6 text-center">
+                                    <button class="btn btn-primary" type="button" onclick="deposito()"> Depositar </button>
+                                </div>
+                                <div class="col-sm-6 text-center">
+                                    <button class="btn btn-success" type="button" onclick="retiro()"> Retirar </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card h-100" style="margin:0;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 bloque">
+                            <h1>Historial de Operaciones</h1>
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table id="table" class="table table-sm"
+                                       data-toolbar="#toolbar1"
+                                       data-show-export="true"
+                                       data-toggle="table"
+                                       data-height="800"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       data-sort-class="table-active"
+                                       data-sortable="true"
+                                       data-show-columns="true"
+                                       data-export-data-type="all"
+                                       data-query-params="exportF"
+                                       data-url="/CuentasAhorro/getOperaciones/@Model.IdCuenta">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th data-field="fecha" data-sortable="true">Fecha</th>
+                                            <th data-field="hora" data-sortable="true">Hora</th>
+                                            <th data-field="saldoAnterior" data-sortable="true">Saldo</th>
+                                            <th data-field="operacion" data-sortable="true">Operacion</th>
+                                            <th data-field="cantidad" data-sortable="true">Cantidad</th>
+                                            <th data-field="restante"> Saldo Restante </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody @*style="background-color:white;" *@></tbody>
+                                </table>
+                            </div>
+                            @* --------------------------------------- *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#SaldoActual").change(function () {
+        $(this).val(parseFloat($(this).val()).toFixed(2));
+    });
+
+    function exportF(params) {
+        var options = $('#table').bootstrapTable('getOptions')
+        if (!options.pagination) {
+            params.limit = options.totalRows
+        }
+        return params
+    }
+
+    function deposito() {
+        var monto = prompt("Indica la cantidad a depositar");
+
+        var IdCuenta = $('#IdCuenta').val();
+        var NoCuenta = $('#NoCuenta').val();
+
+        var data = {
+            "IdCuenta": IdCuenta,
+            "Operacion": "Deposito",
+            "Cantidad": monto
+        };
+        var baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        var respuesta = $.ajax({
+            type: "GET",
+            url: baseUrl + "/CuentasAhorro/Operacion",
+            data: data,
+            cache: false,
+            success: function (response) {
+
+                if (response == "error") {
+                    alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                }
+                else {
+                    $('#Saldo').val(response);
+                    $('#table').bootstrapTable('refresh')
+                }
+            },
+            error: function (response) {
+
+                alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+            }
+        });
+    }
+
+    function retiro() {
+        var monto = prompt("Indica la cantidad a retirar. (Solo multiplos de 100)");
+        if ((monto % 100) == 0) {
+
+            var IdCuenta = $('#IdCuenta').val();
+            var NoCuenta = $('#NoCuenta').val();
+
+            var data = {
+                "IdCuenta": IdCuenta,
+                "Operacion": "Retiro",
+                "Cantidad": monto
+            };
+            var baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+            var respuesta = $.ajax({
+                type: "GET",
+                url: baseUrl + "/CuentasAhorro/Operacion",
+                data: data,
+                cache: false,
+                success: function (response) {
+
+                    if (response == "error") {
+                        alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                    }
+                    else {
+                        $('#Saldo').val(response);
+                        $('#table').bootstrapTable('refresh')
+                    }
+                },
+                error: function (response) {
+
+                    alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                }
+            });
+
+        } else {
+
+            alert(monto + ' no es multiplo de 100');
+
+        }
+    }
+</script>

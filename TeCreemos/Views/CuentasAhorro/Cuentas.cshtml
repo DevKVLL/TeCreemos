@@ -1,0 +1,178 @@
+﻿@model TeCreemos.Models.CatClientes
+@{
+    ViewData["Title"] = "Perfil de Cliente";
+}
+
+<div class="container-fluid">
+    @Html.HiddenFor(model => model.IdCliente)
+    <div class="row mt-4">
+        <div class="col-md-5">
+            <div class="card h-100" style="margin:0;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col bloque">
+                            <div class="input-group">
+                                <h1>Datos de Cliente</h1>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Nombre</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.Nombre) @Html.DisplayFor(model => model.FstApellido) @Html.DisplayFor(model => model.ScndApellido)
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    <a href="mailto:@Model.Correo">@Html.DisplayFor(model => model.Correo)</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">Telefono</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    <a href="tel:@Model.Telefono">@Html.DisplayFor(model => model.Telefono)</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <h6 class="mb-0">INE</h6>
+                                </div>
+                                <div class="col-sm-8 text-secondary">
+                                    @Html.DisplayFor(model => model.ClaveElector)
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <hr />
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col bloque mt-4">
+                            <div class="input-group">
+                                <h1>Aperturar Cuenta</h1>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <h2>Num. Cuenta</h2>
+                                    @Html.Editor("NoCuenta", new { htmlAttributes = new { @type = "text", @class = "p lttssp", @placeholder = "Num. Cuenta", @required = "required", @maxlength = "16" } })
+                                    @Html.ValidationMessage("NoCuenta", "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <h2>Monto de Apertura</h2>
+                                    <div class="input-group input-group-sm mb-3 p">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="background-color: transparent; border: none;" id="inputGroup-sizing-sm">$</span>
+                                        </div>
+                                        @Html.Editor("SaldoActual", new { htmlAttributes = new { @type = "number", @class = "p", @style = "width: 80%; border-style: none; font-size: 12px; ", @placeholder = "0.00", @step = "0.01", @required = "true", @maxlength = "18" } })
+                                        @Html.ValidationMessage("SaldoActual", "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col text-center">
+                                    <button class="btn btn-success" type="button" id="aperturar" onclick="AperturarCuenta()"> Aperturar Cuenta </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card h-100" style="margin:0;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 bloque">
+                            <h1>Cuentas de Ahorro</h1>
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table id="table" class="table table-sm"
+                                       data-toolbar="#toolbar1"
+                                       data-show-export="true"
+                                       data-toggle="table"
+                                       data-height="800"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       data-sort-class="table-active"
+                                       data-sortable="true"
+                                       data-show-columns="true"
+                                       data-export-data-type="all"
+                                       data-query-params="exportF"
+                                       data-url="/CuentasAhorro/getCuentas/@Model.IdCliente">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th data-field="fechaApertura" data-sortable="true">Fecha Apertura</th>
+                                            <th data-field="noCuenta" data-sortable="true">Numero de Cuenta</th>
+                                            <th data-field="saldo" data-sortable="true">Saldo</th>
+                                            <th data-field="detalle"> Detalle </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody @*style="background-color:white;" *@></tbody>
+                                </table>
+                            </div>
+                            @* --------------------------------------- *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#SaldoActual").change(function () {
+        $(this).val(parseFloat($(this).val()).toFixed(2));
+    });
+
+    function exportF(params) {
+        var options = $('#table').bootstrapTable('getOptions')
+        if (!options.pagination) {
+            params.limit = options.totalRows
+        }
+        return params
+    }
+
+    function AperturarCuenta() {
+        var IdCliente = $('#IdCliente').val();
+        var NoCuenta = $('#NoCuenta').val();
+        var SaldoActual = $('#SaldoActual').val();
+
+        var data = {
+            "IdCliente": IdCliente,
+            "NoCuenta": NoCuenta,
+            "SaldoActual": SaldoActual
+        };
+        var baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        var respuesta = $.ajax({
+            type: "GET",
+            url: baseUrl + "/CuentasAhorro/AperturarCuenta",
+            data: data,
+            cache: false,
+            success: function (response) {
+
+                if (response == "error") {
+                    alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                }
+                else if (response == "existente")
+                {
+                    alert("El Num de Cuenta ya existe, favor de ingresar uno distinto.");
+                }
+                else {
+                    $('#table').bootstrapTable('refresh')
+                }
+            },
+            error: function (response) {
+
+                alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                //swal("Oh no!", "Se ha generado un error al intentar almacenar su peticion, por favor intente de nuevo.", "warning");
+            }
+        });
+    }
+</script>

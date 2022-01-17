@@ -1,0 +1,163 @@
+﻿@model TeCreemos.Models.CatClientes
+@{
+    ViewData["Title"] = "CarteraClientes";
+}
+
+<div class="container-fluid">
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 bloque">
+                            <h1>Nuevo Cliente</h1>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <h2>Nombre</h2>
+                                    @Html.Editor("Nombre", new { htmlAttributes = new { @type = "text", @class = "p lttssp", @placeholder = "Nombre", @required = "required", @maxlength = "50" } })
+                                    @Html.ValidationMessage("Nombre", "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <h2>Primer Apellido</h2>
+                                    @Html.Editor("FstApellido", new { htmlAttributes = new { @type = "text", @class = "p lttssp", @placeholder = "Primer Apellido", @required = "required", @maxlength = "50" } })
+                                    @Html.ValidationMessage("FstApellido", "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <h2>Segundo Apellido</h2>
+                                    @Html.Editor("ScndApellido", new { htmlAttributes = new { @type = "text", @class = "p lttssp", @placeholder = "SegundoApellido", @maxlength = "50" } })
+                                    @Html.ValidationMessage("ScndApellido", "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-2">
+                                    <h2>Celular</h2>
+                                    @Html.Editor("Telefono", new { htmlAttributes = new { @type = "tel", @class = "p num", @placeholder = "Telefono", @maxlength = "13", @required = true } })
+                                    @Html.ValidationMessage("Telefono", "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <h2>Correo Electronico</h2>
+                                    @Html.Editor("Correo", new { htmlAttributes = new { @type = "email", @class = "p", @placeholder = "Correo", @maxlength = "100" } })
+                                    @Html.ValidationMessage("Correo", "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <h2>Clave Elector</h2>
+                                    @Html.Editor("ClaveElector", new { htmlAttributes = new { @type = "email", @class = "p", @placeholder = "Clave Elector", @maxlength = "18" } })
+                                    @Html.ValidationMessage("ClaveElector", "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <h2>Fecha Nacimiento</h2>
+                                    <input type="text" class="p" id="FechaNacimiento" name="FechaNacimiento" autocomplete="off" />
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="button" class="btn btn-outline-success" onclick="SaveCliente()">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card h-100" style="margin:0;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 bloque">
+                            <h1>Clientes</h1>
+                            <table id="table" class="table"
+                                   data-toggle="table"
+                                   data-show-export="true"
+                                   data-height="800"
+                                   data-pagination="true"
+                                   data-search="true"
+                                   data-sort-class="table-active"
+                                   data-sortable="true"
+                                   data-show-columns="true"
+                                   data-export-data-type="all"
+                                   data-query-params="exportF"
+                                   data-url="/CuentasAhorro/getClientes">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th data-field="nombre" data-sortable="true">Nombre</th>
+                                        <th data-field="telefono">Telefono</th>
+                                        <th data-field="correo">Correo</th>
+                                        <th data-field="claveElector"> Clave  Elector</th>
+                                        <th data-field="detalle"> Detalle </th>
+                                    </tr>
+                                </thead>
+                                <tbody @*style="background-color:white;" *@></tbody>
+                            </table>
+                            @* --------------------------------------- *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $("#FechaNacimiento").val("0");
+
+            $("#FechaNacimiento").datetimepicker({
+                format: 'd/m/Y',
+                timepicker: false,
+                mask: true,
+                maxDate: new Date()
+            });
+
+        });
+
+        function exportF(params) {
+            var options = $('#table').bootstrapTable('getOptions')
+            if (!options.pagination) {
+                params.limit = options.totalRows
+            }
+            return params
+        }
+
+        function SaveCliente() {
+            var Nombre = $('#Nombre').val();
+            var PrimerApellido = $('#FstApellido').val();
+            var SegundoApellido = $('#ScndApellido').val();
+            var FN = $('#FechaNacimiento').val();
+            var Telefono=$('#Telefono').val();
+            var Correo=$('#Correo').val();
+            var Clave=$('#ClaveElector').val();
+
+            var data = {
+                "Nombre": Nombre,
+                "FstApellido": PrimerApellido,
+                "ScndApellido": SegundoApellido,
+                "FechaNacimiento": FN,
+                "Telefono": Telefono,
+                "Correo":Correo,
+                "ClaveElector":Clave
+            };
+            var baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+            var respuesta = $.ajax({
+                type: "GET",
+                url: baseUrl + "/CuentasAhorro/SaveCliente",
+                data: data,
+                cache: false,
+                success: function (response) {
+
+                    if (response == "error") {
+                        alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                    }
+                    else {
+                        $('#table').bootstrapTable('refresh')
+                    }
+                },
+                error: function (response) {
+
+                    alert("Se ha generado un error al intentar almacenar tu petición, intente de nuevo.");
+                }
+            });
+        }
+    </script>
+}
+
